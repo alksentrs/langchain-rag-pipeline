@@ -1,0 +1,57 @@
+{
+  "mcpServers": {
+    "rag-pipeline": {
+      "command": "python",
+      "args": ["mcp_server.py"],
+      "cwd": ".",
+      "env": {
+        "PYTHONPATH": "."
+      }
+    }
+  },
+  "server": {
+    "name": "rag-pipeline",
+    "version": "1.0.0",
+    "description": "LangChain RAG Pipeline with PGVector integration",
+    "capabilities": {
+      "resources": true,
+      "tools": true,
+      "prompts": false,
+      "logging": true
+    }
+  },
+  "resources": [
+    {
+      "uri": "rag://status",
+      "name": "RAG System Status",
+      "description": "Current status and configuration of the RAG system"
+    },
+    {
+      "uri": "rag://search", 
+      "name": "RAG Search Interface",
+      "description": "Search interface for the vector database"
+    },
+    {
+      "uri": "rag://help",
+      "name": "RAG Help Documentation",
+      "description": "Comprehensive help and usage information"
+    }
+  ],
+  "tools": [
+    {
+      "name": "rag_search",
+      "description": "Search the vector database for semantically similar documents",
+      "category": "search"
+    },
+    {
+      "name": "rag_ingest_pdf",
+      "description": "Ingest PDF documents into the vector database",
+      "category": "ingestion"
+    },
+    {
+      "name": "rag_get_stats",
+      "description": "Get system statistics and status information",
+      "category": "management"
+    }
+  ]
+}

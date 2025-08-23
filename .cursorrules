@@ -1,0 +1,62 @@
+# Cursor Rules for RAG Pipeline with MCP Integration
+
+This project includes an MCP (Model Context Protocol) server that provides RAG capabilities.
+
+## Available MCP Tools:
+
+### 1. rag_search
+- **Purpose**: Search the vector database for relevant documents
+- **Usage**: Semantic similarity search across ingested documents
+- **Parameters**: 
+  - `query` (required): Search query string
+  - `k` (optional): Number of results to return (1-10, default: 3)
+- **Example**: "Search for information about GPT-5 performance improvements"
+
+### 2. rag_ingest_pdf
+- **Purpose**: Load and ingest PDF documents into the vector database
+- **Usage**: Process PDFs into searchable chunks with embeddings
+- **Parameters**:
+  - `pdf_path` (required): Path to PDF file
+  - `chunk_size` (optional): Characters per chunk (100-5000, default: 1000)
+  - `chunk_overlap` (optional): Overlap between chunks (0-500, default: 150)
+- **Example**: "Ingest the research paper at ./documents/paper.pdf"
+
+### 3. rag_get_stats
+- **Purpose**: Get system status and statistics
+- **Usage**: Check environment setup, database status, and ingestion history
+- **Parameters**: None
+- **Example**: "Show me the RAG system status"
+
+## MCP Resources:
+
+- **rag://status** - Current system status
+- **rag://search** - Search interface information
+- **rag://help** - Detailed help documentation
+
+## Usage Examples for Cursor:
+
+1. **Search Documents**: 
+   - "Find documents about machine learning performance"
+   - "Search for information on vector databases"
+   - "What does the knowledge base say about embeddings?"
+
+2. **Ingest Documents**:
+   - "Load the PDF file gpt5.pdf into the knowledge base"
+   - "Ingest documents/research.pdf with smaller chunks"
+   - "Add the new paper to the vector database"
+
+3. **System Management**:
+   - "Check if the RAG system is properly configured"
+   - "Show me the current database status"
+   - "What documents have been ingested?"
+
+## Environment Requirements:
+
+- OPENAI_API_KEY: Required for embeddings
+- PGVECTOR_URL: PostgreSQL connection string
+- PGVECTOR_COLLECTION: Collection name for vectors
+
+## MCP Server:
+
+Start the MCP server with: `python mcp_server.py`
+The server provides programmatic access to the RAG pipeline via the Model Context Protocol.
