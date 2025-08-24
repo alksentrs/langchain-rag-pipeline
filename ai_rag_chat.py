@@ -148,6 +148,74 @@ Your Answer:"""
         except Exception as e:
             return f"Error getting AI response: {e}"
     
+    def clean_query(self, query: str) -> str:
+        """
+        Clean and normalize user query for better search results.
+        
+        Args:
+            query: Raw user query
+            
+        Returns:
+            Cleaned and normalized query
+        """
+        import re
+        
+        # Store original for comparison
+        original = query
+        
+        # Remove excessive whitespace
+        query = re.sub(r'\s+', ' ', query)
+        
+        # Normalize punctuation spacing
+        query = re.sub(r'\s+([.!?])', r'\1', query)
+        query = re.sub(r'([.!?])\s*', r'\1 ', query)
+        
+        # Remove leading/trailing whitespace
+        query = query.strip()
+        
+        # Remove common noise characters (optional)
+        # query = re.sub(r'[^\w\s.!?]', '', query)
+        
+        # Convert to lowercase for better matching (optional)
+        # query = query.lower()
+        
+        # Log if query was modified
+        if original != query:
+            print(f"🧹 Query cleaned: '{original}' → '{query}'")
+        
+        return query
+    
+    def analyze_query(self, original_query: str, cleaned_query: str) -> dict:
+        """
+        Analyze the query preprocessing results.
+        
+        Args:
+            original_query: User's original query
+            cleaned_query: Processed query
+            
+        Returns:
+            Analysis results
+        """
+        import re
+        
+        analysis = {
+            'original_length': len(original_query),
+            'cleaned_length': len(cleaned_query),
+            'whitespace_reduction': original_query.count(' ') - cleaned_query.count(' '),
+            'was_modified': original_query != cleaned_query,
+            'modification_type': []
+        }
+        
+        if original_query != cleaned_query:
+            if len(original_query) != len(cleaned_query):
+                analysis['modification_type'].append('length_changed')
+            if original_query.strip() != original_query:
+                analysis['modification_type'].append('whitespace_trimmed')
+            if re.sub(r'\s+', ' ', original_query) != original_query:
+                analysis['modification_type'].append('whitespace_normalized')
+        
+        return analysis
+    
     def chat(self, query):
         """
         Main chat method that combines vector search with AI generation.
@@ -158,11 +226,23 @@ Your Answer:"""
         Returns:
             AI-generated response based on relevant documents
         """
-        print(f"\n🔍 Searching for: '{query}'")
+        # Clean and normalize the query
+        original_query = query
+        cleaned_query = self.clean_query(query)
+        
+        # Analyze query preprocessing
+        query_analysis = self.analyze_query(original_query, cleaned_query)
+        
+        if query_analysis['was_modified']:
+            print(f"🔍 Original query: '{original_query}'")
+            print(f"🧹 Cleaned query: '{cleaned_query}'")
+            print(f"📊 Query analysis: {query_analysis['modification_type']}")
+        
+        print(f"\n🔍 Searching for: '{cleaned_query}'")
         print("=" * 60)
         
-        # Step 1: Vector search
-        search_results = self.search_documents(query, k=5)
+        # Step 1: Vector search with cleaned query
+        search_results = self.search_documents(cleaned_query, k=5)
         
         if not search_results:
             return "❌ No documents found in the database. Please check if documents have been ingested."
